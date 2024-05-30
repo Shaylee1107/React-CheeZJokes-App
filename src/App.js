@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import JokeList from "./JokeList";
 
 const App = () => {

@@ -25,17 +25,17 @@ import "./Joke.css";
 //   }
 // }
 
-const Joke = ({id, votes, text}) => {
-  const [vote, setVote] = useState(0);
+const Joke = ({text}) => {
+  const [votes, setVotes] = useState(0);
 
     return (
       <div className="Joke">
         <div className="Joke-votearea">
-          <button onClick={() => vote(id, +1)}>
+          <button onClick={() => setVotes(vote => vote + 1)}>
             <i className="fas fa-thumbs-up" />
           </button>
 
-          <button onClick={() => vote(id, -1)}>
+          <button onClick={() => setVotes(vote => vote - 1)}>
             <i className="fas fa-thumbs-down" />
           </button>
 

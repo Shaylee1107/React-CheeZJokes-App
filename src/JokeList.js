@@ -6,6 +6,7 @@ import "./JokeList.css";
 const JokeList = ({numJokesToGet = 5}) => {
   const [jokes, setJokes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [voteLeaderboard, setVoteLeaderboard] = useState([]);
 
   const generateNewJokes = () => {
     setJokes([]);
@@ -50,6 +51,18 @@ const JokeList = ({numJokesToGet = 5}) => {
     }
   }
 
+  const updateVotingLeaderboard = (id, votes) => {
+    console.log("RUNNING")
+    console.log(id, votes, 'id, votes')
+    console.log(jokes, 'jokes')
+    console.log(votes, 'THIS IS VOTES VALUE IN JOKELIST')
+    jokes.forEach((j) => {
+      if(j.id === id){
+        
+      }
+    })
+  }
+
     return (
       <div className="JokeList">
         <button
@@ -67,6 +80,7 @@ const JokeList = ({numJokesToGet = 5}) => {
             text={j.joke}
             key={j.id}
             id={j.id}
+            updateVotingLeaderboard={updateVotingLeaderboard}
           />
         ))}
       </div>

@@ -1,20 +1,31 @@
-import React, { Component } from "react";
+import React, {useState} from "react";
 import "./Joke.css";
 
-/** A single joke, along with vote up/down buttons. */
+const Joke = ({text, updateVotingLeaderboard, id, jokeNum}) => {
+  const [votes, setVotes] = useState(0);
 
-class Joke extends Component {
-  render() {
-    const { id, vote, votes, text } = this.props;
+    const currentVoteCount = (userVote) => {
+      if(userVote === 'up'){
+        return votes + 1;
+      } else {
+        return votes - 1;
+      }
+    }
 
     return (
       <div className="Joke">
         <div className="Joke-votearea">
-          <button onClick={evt => vote(id, +1)}>
+          <button onClick={() => {
+            setVotes(vote => vote + 1)
+            updateVotingLeaderboard(id, currentVoteCount('up'), jokeNum);
+            }}>
             <i className="fas fa-thumbs-up" />
           </button>
 
-          <button onClick={evt => vote(id, -1)}>
+          <button onClick={() => {
+            setVotes(vote => vote - 1)
+            updateVotingLeaderboard(id, currentVoteCount('down'));
+          }}>
             <i className="fas fa-thumbs-down" />
           </button>
 
@@ -24,7 +35,7 @@ class Joke extends Component {
         <div className="Joke-text">{text}</div>
       </div>
     );
-  }
+  
 }
 
 export default Joke;

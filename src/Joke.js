@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import "./Joke.css";
 
-const Joke = ({text, updateVotingLeaderboard, id}) => {
+const Joke = ({text, updateVotingLeaderboard, id, jokeNum}) => {
   const [votes, setVotes] = useState(0);
 
     const currentVoteCount = (userVote) => {
@@ -17,7 +17,7 @@ const Joke = ({text, updateVotingLeaderboard, id}) => {
         <div className="Joke-votearea">
           <button onClick={() => {
             setVotes(vote => vote + 1)
-            updateVotingLeaderboard(id, currentVoteCount('up'));
+            updateVotingLeaderboard(id, currentVoteCount('up'), jokeNum);
             }}>
             <i className="fas fa-thumbs-up" />
           </button>

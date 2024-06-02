@@ -6,11 +6,12 @@ import "./JokeList.css";
 const JokeList = ({numJokesToGet = 5}) => {
   const [jokes, setJokes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [voteLeaderboard, setVoteLeaderboard] = useState([]);
+  // const [voteLeaderboard, setVoteLeaderboard] = useState([]);
 
   const generateNewJokes = () => {
     setJokes([]);
     setIsLoading(true);
+    localStorage.clear();
   }
 
   useEffect(() => {
@@ -51,17 +52,31 @@ const JokeList = ({numJokesToGet = 5}) => {
     }
   }
 
-  const updateVotingLeaderboard = (id, votes) => {
-    console.log("RUNNING")
-    console.log(id, votes, 'id, votes')
-    console.log(jokes, 'jokes')
-    console.log(votes, 'THIS IS VOTES VALUE IN JOKELIST')
-    jokes.forEach((j) => {
-      if(j.id === id){
-        
-      }
-    })
+  const updateLocalStorageOnVote = (id, votes, jokeNum) => {
+    const jokeData = localStorage.getItem(`${jokeNum}`);
+    if(jokeData){
+      localStorage.setItem(`${jokeNum}`, JSON.stringify({id: id, votes: votes}));
+    } else {
+      const jokeObj = {id: id, votes: votes}
+      localStorage.setItem(`${jokeNum}`, JSON.stringify(jokeObj));
+    }
   }
+
+  const updateVotingLeaderboard = (id, votes, jokeNum) => {
+    updateLocalStorageOnVote(id, votes, jokeNum);
+    const filteredStorage = [];
+    let keys = Object.values(localStorage);
+    // let parsedKeys = JSON.parse(keys);
+    console.log(keys, 'keys')
+    // console.log(parsedKeys, 'parsedKeys')
+
+
+    // let numArray = [140, 104, 200, 99];
+    // numArray.sort((a, b) => b - a);
+    // console.log(numArray);
+  }
+
+  let jokeNum = 0; 
 
     return (
       <div className="JokeList">
@@ -75,14 +90,18 @@ const JokeList = ({numJokesToGet = 5}) => {
           {showLoadingSpinner()}
         </div>
 
-        {jokes.map(j => (
-          <Joke
+        {jokes.map((j) => {
+          return (
+              <Joke
             text={j.joke}
             key={j.id}
             id={j.id}
             updateVotingLeaderboard={updateVotingLeaderboard}
+            jokeNum = {++jokeNum}
           />
-        ))}
+          )
+        })}
+        
       </div>
     )
 }

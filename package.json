@@ -1,7 +1,7 @@
 {
+  "homepage": "https://shaylee1107.github.io/React-CheeZJokes-Apps",
   "name": "icanhazdadjokes",
   "version": "0.1.0",
-  "homepage": "https://shaylee1107.github.io/React-CheeZJokes-Apps",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "*",

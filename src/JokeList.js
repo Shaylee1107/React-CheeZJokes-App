@@ -75,16 +75,25 @@ const JokeList = ({numJokesToGet = 5}) => {
     console.log(sortedStorage, 'sortedStorage')
 
     console.log(jokes, "jokes")
-    const orderJokes = jokes.map((j) => {
-      console.log(j.id, 'j')
-        for(let i = 0; i < sortedStorage.length; i++){
-          console.log(sortedStorage[i], 'sortedStorage[i]')
-          if(j.id === sortedStorage[i].id){
-            return [j, ...jokes]
-          }
-        }
-      })
-      console.log(orderJokes, 'orderJokes')
+
+    // jokes.filter((j) => {
+    //   if(s.id === j.id){
+    //     return [jokes[i], ...jokes]
+    //   }
+    // })
+
+    // const orderJokes = sortedStorage.forEach((s) => {
+    //     for(let i = 0; i < jokes.length; i++){
+    //       if(s.id === jokes[i].id){
+    //         setJokes(jokes.filter((j) => j !== jokes[i]));
+    //         console.log(jokes, 'THIS JOKES')
+            
+    //         return [jokes[i], ...jokes]
+    //       }
+    //     }
+    //   })
+    //   setJokes(orderJokes);
+    //   console.log(orderJokes, 'orderJokes')
     };
  
     // return orderJokes; 

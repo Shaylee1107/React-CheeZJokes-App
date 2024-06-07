@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Joke from "./Joke";
 import "./JokeList.css";
@@ -6,12 +6,45 @@ import "./JokeList.css";
 const JokeList = ({numJokesToGet = 5}) => {
   const [jokes, setJokes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  // const [voteLeaderboard, setVoteLeaderboard] = useState([]);
+  const [changeJokeOrder, setChangeJokeOrder] = useState(false);
+  const [sortedStorage, setSortedStorage] = useState([]);
 
-  const generateNewJokes = () => {
+  const generateNewJokes = useCallback(() => {
     setJokes([]);
+    setSortedStorage([]);
     setIsLoading(true);
     localStorage.clear();
+    setChangeJokeOrder(false);
+  }, []);
+
+  const displayJokesOnUI = () => {
+      return (
+          jokes.map((j) => {
+            const data = {id: j.id, votes: 0, text: j.joke, key: j.id};
+            localStorage.setItem(`${j.id}`, JSON.stringify(data));
+          return (
+              <Joke
+            text={j.joke}
+            key={j.id}
+            id={j.id}
+            updateLocalStorageOnVote={updateLocalStorageOnVote}
+          />
+          )})
+        )
+  }
+
+  const displayNewOrderdJokesOnUI = () => {
+    return (
+      sortedStorage.map((j) => {
+      return (
+          <Joke
+        text={j.text}
+        key={j.id}
+        id={j.id}
+        updateLocalStorageOnVote={updateLocalStorageOnVote}
+      />
+      )})
+    )
   }
 
   useEffect(() => {
@@ -31,16 +64,32 @@ const JokeList = ({numJokesToGet = 5}) => {
             console.log("duplicate found!");
           }
         }
-
         setIsLoading(false);
-
       } catch (err) {
         console.error(err);
       }
     }
 
     getJokes();
-  }, [generateNewJokes])
+  }, [generateNewJokes, jokes, numJokesToGet])
+
+  const updateSortedStorage = () => {
+    const storage = Object.values(localStorage);
+    const filterdStorage = storage.filter(j => j !== "INFO");
+    const loopedStorage = filterdStorage.map((j) => {
+        return JSON.parse(j);
+    })
+    const mySortedStorage = loopedStorage.sort((a, b) => b.votes - a.votes);
+    setSortedStorage(mySortedStorage);
+    setChangeJokeOrder(true);
+  }
+
+  const updateLocalStorageOnVote = useCallback((id, votes, text, key) => {
+    const data = {id: id, votes: votes, text: text, key: key};
+    localStorage.setItem(`${id}`, JSON.stringify(data));
+    setSortedStorage([]);
+    updateSortedStorage();
+}, []);
 
   const showLoadingSpinner = () => {
     if(isLoading === true){
@@ -52,59 +101,11 @@ const JokeList = ({numJokesToGet = 5}) => {
     }
   }
 
-  const updateLocalStorageOnVote = (id, votes, jokeNum) => {
-    const jokeData = localStorage.getItem(`${jokeNum}`);
-    if(jokeData){
-      localStorage.setItem(`${jokeNum}`, JSON.stringify({id: id, votes: votes}));
-    } else {
-      const jokeObj = {id: id, votes: votes}
-      localStorage.setItem(`${jokeNum}`, JSON.stringify(jokeObj));
-    }
-  }
-
-  const updateVotingLeaderboard = (id, votes, jokeNum) => {
-    updateLocalStorageOnVote(id, votes, jokeNum);
-    const filteredStorage = [];
-    let values = Object.values(localStorage);
-    for(let v of values){
-      if(v !== 'INFO'){
-        filteredStorage.push(JSON.parse(v));
-      }
-    }
-    const sortedStorage = filteredStorage.sort((a, b) => b.votes - a.votes);
-    console.log(sortedStorage, 'sortedStorage')
-
-    console.log(jokes, "jokes")
-
-    // jokes.filter((j) => {
-    //   if(s.id === j.id){
-    //     return [jokes[i], ...jokes]
-    //   }
-    // })
-
-    // const orderJokes = sortedStorage.forEach((s) => {
-    //     for(let i = 0; i < jokes.length; i++){
-    //       if(s.id === jokes[i].id){
-    //         setJokes(jokes.filter((j) => j !== jokes[i]));
-    //         console.log(jokes, 'THIS JOKES')
-            
-    //         return [jokes[i], ...jokes]
-    //       }
-    //     }
-    //   })
-    //   setJokes(orderJokes);
-    //   console.log(orderJokes, 'orderJokes')
-    };
- 
-    // return orderJokes; 
-
-  let jokeNum = 0; 
-
     return (
       <div className="JokeList">
         <button
           className="JokeList-getmore"
-          onClick={() => generateNewJokes()}
+          onClick={generateNewJokes}
         >
           Get New Jokes
         </button>
@@ -112,17 +113,7 @@ const JokeList = ({numJokesToGet = 5}) => {
           {showLoadingSpinner()}
         </div>
 
-        {jokes.map((j) => {
-          return (
-              <Joke
-            text={j.joke}
-            key={j.id}
-            id={j.id}
-            updateVotingLeaderboard={updateVotingLeaderboard}
-            jokeNum = {++jokeNum}
-          />
-          )
-        })}
+        {changeJokeOrder === false ? displayJokesOnUI() : displayNewOrderdJokesOnUI()}
         
       </div>
     )
